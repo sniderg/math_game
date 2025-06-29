@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://5ne87e5ylbrf" path="res://scripts/Level.gd" id="1_0x8qx"]
 [ext_resource type="Script" uid="uid://dbturfqqmef2d" path="res://scripts/Player.gd" id="2_1x9qx"]
 [ext_resource type="Script" uid="uid://l5nuo45gixda" path="res://scripts/Collectible.gd" id="3_2x0qx"]
-[ext_resource type="Script" path="res://scripts/Enemy.gd" id="4_3x1qx"]
+[ext_resource type="Script" uid="uid://ubjjtrc07i7g" path="res://scripts/Enemy.gd" id="4_3x1qx"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_1"]
 size = Vector2(32, 32)
@@ -23,11 +23,11 @@ size = Vector2(100, 30)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_6"]
 size = Vector2(120, 30)
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_1"]
-radius = 20.0
-
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_7"]
 size = Vector2(24, 24)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_1"]
+radius = 20.0
 
 [node name="Level" type="Node2D"]
 script = ExtResource("1_0x8qx")
@@ -40,7 +40,6 @@ script = ExtResource("2_1x9qx")
 shape = SubResource("RectangleShape2D_1")
 
 [node name="Camera2D" type="Camera2D" parent="Player"]
-enabled = true
 
 [node name="Platforms" type="Node2D" parent="."]
 

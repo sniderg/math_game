@@ -5,6 +5,8 @@ signal collected
 @export var collectible_value = 1
 @export var rotation_speed = 2.0
 
+var collect_sound_player = null
+
 func _ready():
 	# Add to collectibles group
 	add_to_group("collectibles")
@@ -18,6 +20,10 @@ func _ready():
 	body_entered.connect(_on_body_entered)
 	
 	print("Collectible collision layer: ", collision_layer, " mask: ", collision_mask)
+
+	# Create audio player
+	collect_sound_player = AudioStreamPlayer.new()
+	add_child(collect_sound_player)
 
 func _process(delta):
 	# Rotate the collectible for visual effect
@@ -48,8 +54,10 @@ func collect():
 	queue_free()
 
 func play_collect_sound():
-	# Simple sound effect - just print for now
-	print("🎵 Collectible collected! (Sound effect)")
+	if collect_sound_player and collect_sound_player.stream:
+		collect_sound_player.play()
+	else:
+		print("🎵 Collectible collected! (Sound effect)")
 
 func play_collect_animation():
 	# Create a simple collection animation

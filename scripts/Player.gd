@@ -9,6 +9,9 @@ var is_alive = true
 var death_y_position = 800  # Y position where player dies if they fall
 var facing_direction = 1  # 1 for right, -1 for left
 
+var jump_sound_player = null
+var laser_sound_player = null
+
 func _ready():
 	# Add player to the "player" group for collectible detection
 	add_to_group("player")
@@ -22,6 +25,16 @@ func _ready():
 	
 	# Create simple player sprite
 	create_player_sprite()
+
+	# Create audio players
+	jump_sound_player = AudioStreamPlayer.new()
+	add_child(jump_sound_player)
+	laser_sound_player = AudioStreamPlayer.new()
+	add_child(laser_sound_player)
+	
+	# Load sounds
+	laser_sound_player.stream = load("res://assets/sounds/laser.mp3")
+	jump_sound_player.stream = load("res://assets/sounds/jump.mp3")
 
 func _physics_process(delta):
 	if not is_alive:
@@ -56,6 +69,12 @@ func _physics_process(delta):
 
 	move_and_slide()
 
+	# Check for collisions with enemies
+	for i in range(get_slide_collision_count()):
+		var collision = get_slide_collision(i)
+		if collision.get_collider().is_in_group("enemies"):
+			die()
+
 func _input(event):
 	# Handle shooting
 	if event.is_action_pressed("shoot"):
@@ -68,8 +87,10 @@ func die():
 	get_parent()._on_player_fell()
 
 func play_jump_sound():
-	# Simple jump sound effect
-	print("🔊 Jump sound!")
+	if jump_sound_player and jump_sound_player.stream:
+		jump_sound_player.play()
+	else:
+		print("🔊 Jump sound! (No audio file loaded)")
 
 func shoot_laser():
 	# Create a laser projectile
@@ -79,6 +100,13 @@ func shoot_laser():
 	# Set up collision layers for laser
 	laser.collision_layer = 8  # Laser is on layer 8
 	laser.collision_mask = 4   # Laser can hit layer 4 (enemies)
+	laser.body_entered.connect(func(body):
+		if body.is_in_group("enemies"):
+			body.die()
+		laser.queue_free()
+	)
+	
+	print("Laser created with collision layer: ", laser.collision_layer, " mask: ", laser.collision_mask)
 	
 	# Add collision shape
 	var collision_shape = CollisionShape2D.new()
@@ -113,8 +141,10 @@ func shoot_laser():
 	tween.tween_callback(laser.queue_free)
 
 func play_laser_sound():
-	# Simple laser sound effect
-	print("💥 Laser sound!")
+	if laser_sound_player and laser_sound_player.stream:
+		laser_sound_player.play()
+	else:
+		print("💥 Laser sound! (No audio file loaded)")
 
 func create_player_sprite():
 	# Create a simple player sprite with ColorRect
@@ -124,3 +154,9 @@ func create_player_sprite():
 	sprite.color = Color(0.2, 0.6, 1, 1)  # Blue color
 	sprite.position = Vector2(-16, -16)  # Center the sprite
 	add_child(sprite) 
+
+func _on_body_entered(body):
+	print("Player body_entered signal triggered with: ", body.name, " groups: ", body.get_groups())
+	if body.is_in_group("enemies"):
+		print("Player touched enemy! Player dies!")
+		die()

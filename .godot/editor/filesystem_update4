@@ -2,3 +2,4 @@ res://scenes/Level.tscn
 res://scripts/Collectible.gd
 res://scripts/Player.gd
 res://scripts/Level.gd
+res://scripts/Enemy.gd
