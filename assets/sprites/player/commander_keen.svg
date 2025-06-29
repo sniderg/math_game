@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Helmet -->
+  <ellipse cx="16" cy="8" rx="8" ry="6" fill="#ff6b35" stroke="#333" stroke-width="1"/>
+  
+  <!-- Helmet visor -->
+  <ellipse cx="16" cy="7" rx="5" ry="3" fill="#333"/>
+  <ellipse cx="16" cy="7" rx="4" ry="2" fill="#666"/>
+  
+  <!-- Body -->
+  <rect x="12" y="14" width="8" height="12" fill="#4a90e2" stroke="#333" stroke-width="1"/>
+  
+  <!-- Arms -->
+  <rect x="8" y="16" width="4" height="8" fill="#4a90e2" stroke="#333" stroke-width="1"/>
+  <rect x="20" y="16" width="4" height="8" fill="#4a90e2" stroke="#333" stroke-width="1"/>
+  
+  <!-- Laser Gun -->
+  <rect x="22" y="18" width="6" height="2" fill="#666" stroke="#333" stroke-width="1"/>
+  <rect x="28" y="17" width="2" height="4" fill="#ff0000" stroke="#333" stroke-width="1"/>
+  
+  <!-- Legs -->
+  <rect x="13" y="26" width="3" height="6" fill="#4a90e2" stroke="#333" stroke-width="1"/>
+  <rect x="16" y="26" width="3" height="6" fill="#4a90e2" stroke="#333" stroke-width="1"/>
+  
+  <!-- Eyes (through visor) -->
+  <circle cx="14" cy="7" r="1" fill="#00ff00"/>
+  <circle cx="18" cy="7" r="1" fill="#00ff00"/>
+</svg> 
