@@ -87,7 +87,7 @@ func create_victory_message():
 	canvas_layer.add_child(victory_label)
 
 func _on_player_fell():
-	# Reset player position if they fall off the level
+	# Reset player position if they fall off the level or die
 	if player:
 		# Reset player position
 		player.global_position = player_start_position

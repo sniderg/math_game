@@ -14,9 +14,9 @@ func _ready():
 	add_to_group("player")
 	print("Player added to 'player' group")
 	
-	# Player is on layer 2, scans for layer 1 (platforms)
+	# Player is on layer 2, scans for layer 1 (platforms) and layer 4 (enemies)
 	collision_layer = 2
-	collision_mask = 1
+	collision_mask = 5  # Can collide with layers 1 (platforms) and 4 (enemies)
 	
 	print("Player collision layer: ", collision_layer, " mask: ", collision_mask)
 	
@@ -63,7 +63,7 @@ func _input(event):
 
 func die():
 	is_alive = false
-	print("Player died! Falling off the level.")
+	print("Player died! Starting over...")
 	# Notify the level that player died
 	get_parent()._on_player_fell()
 
@@ -75,6 +75,10 @@ func shoot_laser():
 	# Create a laser projectile
 	var laser = Area2D.new()
 	laser.add_to_group("lasers")
+	
+	# Set up collision layers for laser
+	laser.collision_layer = 8  # Laser is on layer 8
+	laser.collision_mask = 4   # Laser can hit layer 4 (enemies)
 	
 	# Add collision shape
 	var collision_shape = CollisionShape2D.new()
