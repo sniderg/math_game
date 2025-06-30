@@ -10,8 +10,8 @@ config_version=5
 
 [application]
 
-config/name="Simple Platformer"
-config/description="A simple 2D platformer game"
+config/name="Laser Game"
+config/description="A 2D platformer game with laser shooting mechanics"
 run/main_scene="res://scenes/HomeScreen.tscn"
 config/features=PackedStringArray("4.4")
 config/icon="res://icon.svg"

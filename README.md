@@ -1,24 +1,30 @@
-# Simple Platformer
+# Laser Game
 
-A simple 2D platformer game built with Godot Engine 4.2.
+A 2D platformer game with laser shooting mechanics built with Godot Engine 4.4.
 
 ## Features
 
 - **Player Movement**: Smooth left/right movement with jumping mechanics
+- **Laser Shooting**: Shoot lasers to defeat enemies
+- **Enemy Combat**: Enemies patrol platforms and can be defeated with lasers
+- **Death Animation**: Visual feedback when player touches enemies
 - **Platform Physics**: Solid platforms with proper collision detection
 - **Collectibles**: Rotating collectible items that can be gathered
 - **Camera System**: Camera follows the player automatically
-- **Level Management**: Basic level completion system
+- **Level Management**: Multiple levels with transitions
+- **Sound Effects**: Jump and laser sound effects
+- **Moving Platforms**: Dynamic platforms in level 2
 
 ## Controls
 
 - **A/Left Arrow**: Move left
 - **D/Right Arrow**: Move right
 - **Space/W**: Jump
+- **Left Click/X**: Shoot laser
 
 ## How to Run
 
-1. **Install Godot Engine 4.2** or later from [godotengine.org](https://godotengine.org/)
+1. **Install Godot Engine 4.4** or later from [godotengine.org](https://godotengine.org/)
 2. **Open the project** in Godot Engine
 3. **Click the Play button** or press F5 to run the game
 
@@ -65,7 +71,7 @@ Edit the `scripts/Player.gd` file to adjust:
 
 ## Development Notes
 
-- Built with Godot 4.2
+- Built with Godot 4.4
 - Uses CharacterBody2D for player physics
 - Implements proper collision layers and groups
 - Ready for expansion with sprites, sounds, and additional levels
