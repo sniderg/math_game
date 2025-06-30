@@ -23,6 +23,15 @@ func _ready():
 	
 	print("Player collision layer: ", collision_layer, " mask: ", collision_mask)
 	
+	# Create collision shape for player
+	var collision_shape = CollisionShape2D.new()
+	collision_shape.name = "CollisionShape2D"
+	var shape = RectangleShape2D.new()
+	shape.size = Vector2(20, 35)  # Adjusted to match new character size
+	collision_shape.shape = shape
+	collision_shape.position = Vector2(0, -5)  # Adjusted position to match sprite
+	add_child(collision_shape)
+	
 	# Create simple player sprite
 	create_player_sprite()
 
@@ -64,6 +73,8 @@ func _physics_process(delta):
 			facing_direction = 1
 		elif direction < 0:
 			facing_direction = -1
+		# Update character sprite direction
+		update_character_direction()
 	else:
 		velocity.x = move_toward(velocity.x, 0, speed)
 
@@ -82,9 +93,34 @@ func _input(event):
 
 func die():
 	is_alive = false
-	print("Player died! Starting over...")
-	# Notify the level that player died
-	get_parent()._on_player_fell()
+	print("Player died! Starting death animation...")
+	
+	# Get the sprite container for animation
+	var sprite_container = get_node_or_null("Sprite2D")
+	if sprite_container:
+		# Create death animation
+		var tween = create_tween()
+		
+		# Flash red and shrink
+		tween.parallel().tween_property(sprite_container, "modulate", Color.RED, 0.1)
+		tween.parallel().tween_property(sprite_container, "scale", Vector2(0.5, 0.5), 0.2)
+		
+		# Fade out after shrinking
+		tween.tween_property(sprite_container, "modulate", Color.TRANSPARENT, 0.2)
+		
+		# Wait for animation to complete, then respawn
+		tween.tween_callback(func():
+			print("Death animation complete, respawning...")
+			# Reset sprite properties
+			sprite_container.modulate = Color.WHITE
+			sprite_container.scale = Vector2(1, 1)
+			# Notify the level that player died
+			get_parent()._on_player_fell()
+		)
+	else:
+		# Fallback if sprite not found
+		print("Death animation complete, respawning...")
+		get_parent()._on_player_fell()
 
 func play_jump_sound():
 	if jump_sound_player and jump_sound_player.stream:
@@ -108,21 +144,21 @@ func shoot_laser():
 	
 	print("Laser created with collision layer: ", laser.collision_layer, " mask: ", laser.collision_mask)
 	
-	# Add collision shape
-	var collision_shape = CollisionShape2D.new()
-	var shape = RectangleShape2D.new()
-	shape.size = Vector2(20, 4)
-	collision_shape.shape = shape
-	laser.add_child(collision_shape)
-	
 	# Add visual representation
 	var laser_sprite = ColorRect.new()
 	laser_sprite.size = Vector2(20, 4)
 	laser_sprite.color = Color.RED
 	laser.add_child(laser_sprite)
 	
+	# Add collision shape for laser
+	var laser_collision = CollisionShape2D.new()
+	var laser_shape = RectangleShape2D.new()
+	laser_shape.size = Vector2(20, 4)
+	laser_collision.shape = laser_shape
+	laser.add_child(laser_collision)
+	
 	# Position laser at gun tip
-	var gun_offset = Vector2(16, 0) if facing_direction > 0 else Vector2(-16, 0)
+	var gun_offset = Vector2(16, -7) if facing_direction > 0 else Vector2(-16, -7)
 	laser.global_position = global_position + gun_offset
 	
 	# Add to scene
@@ -147,13 +183,134 @@ func play_laser_sound():
 		print("💥 Laser sound! (No audio file loaded)")
 
 func create_player_sprite():
-	# Create a simple player sprite with ColorRect
-	var sprite = ColorRect.new()
-	sprite.name = "Sprite2D"
-	sprite.size = Vector2(32, 32)
-	sprite.color = Color(0.2, 0.6, 1, 1)  # Blue color
-	sprite.position = Vector2(-16, -16)  # Center the sprite
-	add_child(sprite) 
+	# Create a container for the player sprite
+	var sprite_container = Node2D.new()
+	sprite_container.name = "Sprite2D"
+	# Move the sprite container up so the feet are at the bottom
+	sprite_container.position = Vector2(0, -10)
+	add_child(sprite_container)
+	
+	# Create body (torso) - shorter
+	var body = ColorRect.new()
+	body.name = "Body"
+	body.size = Vector2(20, 18)  # Shorter body
+	body.color = Color(0.2, 0.6, 1, 1)  # Blue body
+	body.position = Vector2(-10, -9)
+	sprite_container.add_child(body)
+	
+	# Create head - smaller
+	var head = ColorRect.new()
+	head.name = "Head"
+	head.size = Vector2(14, 14)  # Smaller head
+	head.color = Color(0.9, 0.7, 0.5, 1)  # Skin color
+	head.position = Vector2(-7, -16)
+	sprite_container.add_child(head)
+	
+	# Create eyes
+	var left_eye = ColorRect.new()
+	left_eye.name = "LeftEye"
+	left_eye.size = Vector2(2, 2)
+	left_eye.color = Color(0, 0, 0, 1)  # Black eyes
+	left_eye.position = Vector2(-5, -15)
+	sprite_container.add_child(left_eye)
+	
+	var right_eye = ColorRect.new()
+	right_eye.name = "RightEye"
+	right_eye.size = Vector2(2, 2)
+	right_eye.color = Color(0, 0, 0, 1)  # Black eyes
+	right_eye.position = Vector2(-1, -15)
+	sprite_container.add_child(right_eye)
+	
+	# Create arms - shorter
+	var left_arm = ColorRect.new()
+	left_arm.name = "LeftArm"
+	left_arm.size = Vector2(5, 12)  # Shorter arms
+	left_arm.color = Color(0.2, 0.6, 1, 1)  # Blue arms
+	left_arm.position = Vector2(-15, -6)
+	sprite_container.add_child(left_arm)
+	
+	var right_arm = ColorRect.new()
+	right_arm.name = "RightArm"
+	right_arm.size = Vector2(5, 12)  # Shorter arms
+	right_arm.color = Color(0.2, 0.6, 1, 1)  # Blue arms
+	right_arm.position = Vector2(10, -6)
+	sprite_container.add_child(right_arm)
+	
+	# Create laser gun on right arm - more pronounced
+	var laser_gun = ColorRect.new()
+	laser_gun.name = "LaserGun"
+	laser_gun.size = Vector2(14, 8)  # Bigger gun
+	laser_gun.color = Color(0.2, 0.2, 0.2, 1)  # Darker gun
+	laser_gun.position = Vector2(15, -7)
+	sprite_container.add_child(laser_gun)
+	
+	# Create gun barrel - more pronounced
+	var gun_barrel = ColorRect.new()
+	gun_barrel.name = "GunBarrel"
+	gun_barrel.size = Vector2(10, 3)  # Bigger barrel
+	gun_barrel.color = Color(0.1, 0.1, 0.1, 1)  # Darker barrel
+	gun_barrel.position = Vector2(29, -6)
+	sprite_container.add_child(gun_barrel)
+	
+	# Create gun grip
+	var gun_grip = ColorRect.new()
+	gun_grip.name = "GunGrip"
+	gun_grip.size = Vector2(4, 8)  # Gun grip
+	gun_grip.color = Color(0.4, 0.4, 0.4, 1)  # Lighter grip
+	gun_grip.position = Vector2(17, -2)
+	sprite_container.add_child(gun_grip)
+	
+	# Create gun sight
+	var gun_sight = ColorRect.new()
+	gun_sight.name = "GunSight"
+	gun_sight.size = Vector2(2, 2)  # Gun sight
+	gun_sight.color = Color(1, 0, 0, 1)  # Red sight
+	gun_sight.position = Vector2(20, -8)
+	sprite_container.add_child(gun_sight)
+	
+	# Create legs - much shorter
+	var left_leg = ColorRect.new()
+	left_leg.name = "LeftLeg"
+	left_leg.size = Vector2(7, 8)  # Much shorter legs
+	left_leg.color = Color(0.1, 0.3, 0.8, 1)  # Darker blue legs
+	left_leg.position = Vector2(-8, 9)
+	sprite_container.add_child(left_leg)
+	
+	var right_leg = ColorRect.new()
+	right_leg.name = "RightLeg"
+	right_leg.size = Vector2(7, 8)  # Much shorter legs
+	right_leg.color = Color(0.1, 0.3, 0.8, 1)  # Darker blue legs
+	right_leg.position = Vector2(1, 9)
+	sprite_container.add_child(right_leg)
+	
+	# Create feet - positioned at ground level
+	var left_foot = ColorRect.new()
+	left_foot.name = "LeftFoot"
+	left_foot.size = Vector2(8, 3)  # Smaller feet
+	left_foot.color = Color(0.2, 0.2, 0.2, 1)  # Dark gray feet
+	left_foot.position = Vector2(-9, 17)  # At ground level
+	sprite_container.add_child(left_foot)
+	
+	var right_foot = ColorRect.new()
+	right_foot.name = "RightFoot"
+	right_foot.size = Vector2(8, 3)  # Smaller feet
+	right_foot.color = Color(0.2, 0.2, 0.2, 1)  # Dark gray feet
+	right_foot.position = Vector2(1, 17)  # At ground level
+	sprite_container.add_child(right_foot)
+
+func update_character_direction():
+	# Get the sprite container
+	var sprite_container = get_node_or_null("Sprite2D")
+	if not sprite_container:
+		return
+	
+	# Flip the character based on facing direction
+	if facing_direction > 0:
+		# Facing right - normal scale
+		sprite_container.scale.x = 1
+	else:
+		# Facing left - flip horizontally
+		sprite_container.scale.x = -1
 
 func _on_body_entered(body):
 	print("Player body_entered signal triggered with: ", body.name, " groups: ", body.get_groups())
